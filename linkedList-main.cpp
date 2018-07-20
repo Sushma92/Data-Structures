@@ -22,13 +22,15 @@ int main() {
 			getline(f, str);
 			string buf;						
 			stringstream ss(str);
-			vector<string> tokens; 
-			while (ss >> buf)
-				tokens.push_back(buf);
-				for(int i =0; i< tokens.size(); i++)
+			vector<string> tokens;
+			if (str != "")
+			{
+				while (ss >> buf)
+					tokens.push_back(buf);
+				for (int i = 0; i < tokens.size(); i++)
 					cout << tokens[i];
-			list->addNewMember(tokens);
-
+				list->addNewMember(tokens);
+			}
 		}
 
 		int uin = 0;
@@ -97,14 +99,15 @@ int main() {
 					cout << "Now please input the name of the owner of the animal: ";
 					getchar();
 					getline(cin, name);
-					list->modifyExisting(an, name, sp, db, trt);
+					list->modifyExisting(an, name);
 					break;
 
 				case 3:
 					cout << "Please input the name of the animal whose record you wish to delete: ";
 					cin >> an;
 					cout << "Now please input the name of the owner of the animal: ";
-					cin >> name;
+					getchar();
+					getline(cin, name);
 					list->deleteMember(an, name);
 					break;
 
