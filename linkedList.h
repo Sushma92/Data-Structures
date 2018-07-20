@@ -10,7 +10,7 @@ public:
 	
 	void insert(vector<string> data);
 	void addNewMember(vector<string> data);
-	void modifyExisting(string an, string name, string sp, string db, vector<string> trt);
+	void modifyExisting(string an, string name);
 	void deleteMember(string an, string name);
 
 	void display();
