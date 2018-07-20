@@ -52,49 +52,71 @@ void linkedList::addNewMember(vector<string> data)
 
 void linkedList::insert(vector<string> data) {
 	Node *temp = new Node();
-	temp = head;
+	
 	Node* current = new Node();
 	Node* previous = new Node();
+	previous = head;
 	bool found = 0;
-	while (temp != NULL) {
-		string fullname = temp->firstname + " " + temp->lastname;
+	while (previous != NULL) {
+		string fullname = previous->firstname + " " + previous->lastname;
 		string name = data[2] + " " + data[1];
-		if (data[0] == temp->ani_name &&  name == fullname) {
-			current = temp->next;
-			previous = temp;
+		if (data[0] == previous->ani_name &&  name == fullname) {
+			current = previous->next;
 			for (int i = 0; i < data.size(); i++) {
 				if (i == 0) {
-					previous->next->ani_name = data[i];
+					temp->ani_name = data[i];
 				}
 				if (i == 1) {
 
-					previous->next->lastname = data[i];
+					temp->lastname = data[i];
 				}
 				if (i == 2) {
-					previous->next->firstname = data[i];
+					temp->firstname = data[i];
 				}
 				if (i == 3) {
-					previous->next->species = data[i];
+					temp->species = data[i];
 				}
 				if (i == 4) {
-					previous->next->dob = data[i];
+					temp->dob = data[i];
 				}
 				else if (i > 4) {
-					previous->next->treatments.push_back(data[i]);
+					temp->treatments.push_back(data[i]);
 
 				}
 			}
-			previous->next->next = current;
+			previous->next = temp;
+			temp->next = current;
+
 			found = 1;
 			break;
-		}temp = temp->next;
+		}previous = previous->next;
 	}
-		if(found == 0) {
-			addNewMember(data);
-		}
+	if (found == 0) {
+		Node* t = new Node();
+		Node* p = new Node();
 
-	
-
+		int i=0;
+		
+			t = head;
+			while (t->next != NULL) {
+				
+				t = t->next;
+			}
+						
+			p->ani_name = data[0];
+			p->lastname = data[1];
+			p->firstname = data[2];
+			p->species= data[3];
+			p->dob = data[4];
+			if(i > 4) {
+				p->treatments.push_back(data[i]);
+			}
+			t->next = p;
+			tail = p;
+			
+			
+			
+	}
 }
 
 void linkedList::search(string an, string name) {
@@ -109,6 +131,7 @@ void linkedList::search(string an, string name) {
 			cout << an << " with owner " << name << " is found." << endl;
 			cout << "Animal's name: " << temp->ani_name << endl;
 			cout << "Animal's owner: " << fullname << endl;
+			cout << "Species: " << temp->species << endl;
 			cout << "Date-of-Birth: " << temp->dob << endl;
 			cout << "Treatments: " << endl;
 			for (int i = 0; i < temp->treatments.size(); i++) {
@@ -125,7 +148,9 @@ void linkedList::search(string an, string name) {
 	}
 }
 
-void linkedList::modifyExisting(string an, string name, string sp, string db, vector<string> trt) {
+
+
+void linkedList::modifyExisting(string an, string name) {
 	Node *temp = new Node();
 	temp = head;
 	string newData;
@@ -136,32 +161,34 @@ void linkedList::modifyExisting(string an, string name, string sp, string db, ve
 		string fullname = temp->firstname + " " + temp->lastname;
 
 		if (an == temp->ani_name && name == fullname) {
-			ofstream f;
-			f.open("animals.dat", ios::out);
-			if (f.is_open()) {
-				cout << "Please input the name of the species: " << endl;
-				cin >> temp->species;
-				f << temp->species;
-				cout << "Please input the animal's date of birth: " << endl;
-				cin >> temp->dob;
-				f << temp->dob;
-				cout << "Please input the animal's first treatment: "<< endl;
-				
-					for (int i = 1; i < 11;) {
-						cout << endl << "Treatment #" << i << ": ";
-						getline(cin, newData);
-						if (newData == "q" || newData == "Q")
-						{
-							break;
-						}
-						trt.push_back(newData);
-					
-				}
-				f.close();
-			}
-		}
-		temp = temp->next;
+			found = 1;
+			break;
+		}temp = temp->next;
 	}
+	if (found == 1) {
+		cout << "Please input the name of the species: " << endl;
+		cin >> temp->species;
+			
+			cout << "Please input the animal's date of birth: " << endl;
+			cin >> temp->dob;
+			
+			cout << "Please input the animal's first treatment: " << endl;
+
+			for (int i = 0; i < 12; i++) {
+				cout << "Treatment #" << i << ": ";
+				
+				getline(cin, newData);
+				if (newData == "q" || newData == "Q")
+				{
+					break;
+				}
+				temp->treatments.push_back(newData);
+
+			}
+			
+		
+	}
+		
 		if (found == 0) {
 			cout << an << " with owner " << name << " is not found." << endl;
 		}
@@ -174,44 +201,55 @@ void linkedList::deleteMember(string an, string name) {
 	
 	Node* current = new Node();
 	Node* previous = new Node();
+	Node* temp = new Node();
+	Node* a = new Node();
 	previous = head;
-	current = previous->next;
 	
+	int found = 0;
 	while (previous != NULL) {
-		string fullname;
-		while (an != previous->ani_name && name != fullname) {
-			fullname = previous->firstname + " " + previous->lastname;
-			previous = previous->next;
+		string fullname= previous->firstname + " " + previous->lastname;;
+		if (an == previous->ani_name && name == fullname) {
+			found = 1;
+			break;
 		}
+			previous = previous->next;
+		
 	}
-
-		if (previous->next = NULL) {
+	if (found == 1) {
+		if (previous->next== NULL) {
 			current = head;
-			while (current->next != NULL) {
-				previous = current;
+			while (current != previous) {
+				temp = current;
 				current = current->next;
 			}
-			tail = previous;
-			previous->next = NULL;
+			tail = temp;
+			tail->next = NULL;
 			delete current;
 			cout << "The record has been deleted" << endl;
 		}
 
-
-		else if (previous = head) {
-			current = previous;
+		else if (previous == head) {
+			temp = previous;
 			previous = previous->next;
-			delete current;
+			head = previous;
+			delete temp;
 			cout << "The record has been deleted" << endl;
 		}
 
 		else {
-			previous = current;
-			current = current->next;
-			previous->next = current->next;
+			current = head;
+			while (current != previous) {
+				temp = current;
+				current = current->next;
+			}
+			temp->next = current->next;
 			delete current;
 			cout << "The record has been deleted" << endl;
 		}
+	}
+	else if (found == 0) {
+		cout << an << " with owner " << name << " is not found." << endl;
+	}
 
 	
 }
@@ -232,4 +270,3 @@ void linkedList::display() {
 		
 	}
 }
-
